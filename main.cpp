@@ -6,7 +6,6 @@ using namespace std;
 
 void get_hex_string(char *buff, int buff_len, char *ret)
 {
-    printf("%s\n", buff);
     int j;  //index of buff
     int i;  //index of string
     char nibble;
@@ -23,24 +22,13 @@ void get_hex_string(char *buff, int buff_len, char *ret)
             nibble = buff[j] & 0x0F;
             j++;
         }
-
         ret[i] = hex_map[nibble];
     }
-
-    printf("strlen: %d || %d\n", strlen(ret), buff_len*2);
-
     if(strlen(ret) != buff_len*2) {
-        printf("entrer if\n");
-        printf("Avant changement etat: %s\n", ret);
         for(int h=buff_len*2; h<strlen(ret); h++) {
-            printf("nombre de bouclea faire: %d\nindex: %d changement etat de %c\n",strlen(ret)-(buff_len*2), h, ret[h]);
             ret[h] = '\0';
         }
-        printf("fin if\n");
     }
-    printf("dans fonction hex: %s OKAY \n", ret);
-    for(int u=0; u<strlen(ret); u++) printf("%c", ret[u]);
-    printf("\n");
     return;
 }
 
@@ -90,13 +78,9 @@ void config()
 
 int main(void)
 {
-    close(3);
-    close(4);
     DHT22 *ctempHum = new DHT22();
     MICS *cco2 = new MICS();
     float co2 = 0.0f;
-    int serial;
-    string trameStr;
     ctempHum->checkgpio();
     ctempHum->Humidity();
     ctempHum->Temperature();
@@ -107,27 +91,25 @@ int main(void)
     float Humidity = ctempHum->getHumidity();
     printf("\nCelsius: %6.2f *C\n\nHumidity: %6.2f %\n\n",Celsius,Humidity);
     cco2->closeBus();
+
+    int serial;
+    string trameStr;
     serial = serialOpen("/dev/ttyAMA0",57600);
     config();
 
-
-
     trameStr = createTrame(co2, Celsius, Humidity);
-    printf("\n%s\n",trameStr);
     char donnees[trameStr.length()+1];
 
     strcpy(donnees, trameStr.c_str());
 
-    printf("donneee %s\n", donnees);
+    printf("donnees: %s\n", donnees);
     char payload[strlen(donnees)*2];
 
-    printf("sizeof ret = %d\n", strlen(payload));
     char *trame = new char();
-
 
     get_hex_string(donnees,strlen(donnees),payload);
 
-    strcpy(trame, "mac tx uncnf 4 ");
+    strcpy(trame, "mac tx cnf 4 ");
     strcat(trame, payload);
     strcat(trame, "\r\n");
 
@@ -139,4 +121,3 @@ int main(void)
 
     return 0;
 }
-
