@@ -4,16 +4,17 @@
 
 using namespace std;
 
+//conversion hexadécimal en string 
 void get_hex_string(char *buff, int buff_len, char *ret)
 {
-    int j;  //index of buff
-    int i;  //index of string
+    int j;  //index buff
+    int i;  //index string
     char nibble;
     const char hex_map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     for (i = 0, j = 0; i < buff_len*2; i++)
     {
-        nibble = 20;    // out of bounds of hex_map
+        nibble = 20; 
 
         if (i % 2 == 0)
             nibble = (buff[j] >> 4) & 0x0F;
@@ -32,6 +33,7 @@ void get_hex_string(char *buff, int buff_len, char *ret)
     return;
 }
 
+// création des trames en format "string"
 string createTrame(float co2, float temperature, float humidite) {
     std::stringstream toString;
 
@@ -54,7 +56,7 @@ string createTrame(float co2, float temperature, float humidite) {
     return strTrame;
 }
 
-
+// Configuration de la connexion a chirpStack 
 void config()
 {
     int serial = serialOpen("/dev/ttyAMA0",57600);
